@@ -1,0 +1,6 @@
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/max-messenger/max-bot-api-client-go/v2 v2.0.11 h1:2uhT49aSwOyIW++xnu+EqKxuWgoQsStDH+16BnneFrs=
+github.com/max-messenger/max-bot-api-client-go/v2 v2.0.11/go.mod h1:91aoCw8MKHusYRmMInNGXxiYGOIBZLULfWGxDWBJBCU=
+github.com/max-messenger/maxbot v0.0.2 h1:fqrJny0PrsuwWMeiplywx0WdL1Pt72IbPmJI0rl2OcQ=
+github.com/max-messenger/maxbot v0.0.2/go.mod h1:DjsqJPhIKpVE3D+RdxCq5+hA6Tp5ZPSQKV8x1jWxehs=
