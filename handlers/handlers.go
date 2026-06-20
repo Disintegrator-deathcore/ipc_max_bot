@@ -28,7 +28,7 @@ func SayHi() string {
 }
 
 func SayBye() string {
-	return "Пока челик..."
+	return "Пока челик!"
 }
 
 func SayHiHandler(c maxbot.Context) error {
