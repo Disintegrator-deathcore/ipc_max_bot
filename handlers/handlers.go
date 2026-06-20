@@ -13,6 +13,10 @@ func OnTextHandler(c maxbot.Context) error {
 		return c.Send(SayHi())
 	}
 
+	if text == "bye" {
+		return c.Send(SayBye())
+	}
+
 	if err := c.Send(fmt.Sprintf("%s - принято", text)); err != nil {
 		return err
 	}
@@ -21,6 +25,10 @@ func OnTextHandler(c maxbot.Context) error {
 
 func SayHi() string {
 	return "Ну привет челик..."
+}
+
+func SayBye() string {
+	return "Пока челик..."
 }
 
 func SayHiHandler(c maxbot.Context) error {
