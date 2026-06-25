@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log"
 	"os"
 
 	maxbotapi "github.com/max-messenger/max-bot-api-client-go/v2"
@@ -36,74 +35,58 @@ func sendLocalImage(ctx context.Context, api *maxbot.Api, chatID int64, text, fi
 // OnTextHandler обрабатывает любые текстовые сообщения, отправленные пользователем боту.
 // В зависимости от текста сообщения, бот отвечает определенной фразой или подтверждает получение текста.
 func OnTextHandler(c maxbot.Context) error {
-	text := c.Update().GetMessage().Body.Text
-	log.Print(text)
 	defaultAnswer := "Я бот ИПК, вот что я умею"
 
 	kb := model.NewKeyboard()
-	kb.AddRow().AddCallBack("Отправить документы", "/Docs")
+	kb.AddRow().
+		AddCallBack("Информация о колледже", "/AboutCollege").
+		AddCallBack("Информация о поступлении", "/AboutAdmission")
 
-	switch text {
-	case "привет":
-		return c.Send(SayHi())
-	case "пока":
-		return c.Send(SayBye())
-	case "как дела?":
-		return c.Send(SayHowAreYou())
-	default:
-		if err := c.Send(defaultAnswer, maxbot.WithKeyboard(kb)); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func SayHi() string {
-	return "Ну привет челик..."
-}
-
-func SayBye() string {
-	return "Пока челик!"
-}
-
-func SayHowAreYou() string {
-	return "у меня всё хорошо, а у тебя"
-}
-
-func StartHandler(c maxbot.Context) error {
-	return c.Send("Здравствуйте, чем могу помочь?")
-}
-
-// InfoHandler отображает информацию о боте при отправке команды /info.
-func InfoHandler(c maxbot.Context) error {
-	kb := model.NewKeyboard()
-	kb.AddRow().AddLink("docs", "https://dev.max.ru/docs")
-	err := c.Send("max мне в руки", maxbot.WithKeyboard(kb))
-	if err != nil {
+	if err := c.Send(defaultAnswer, maxbot.WithKeyboard(kb)); err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func SendDocs(c maxbot.Context) error {
-	text := "Какой документ необходимо отправить?"
+// Функция обработки нажатия кнопки информации о колледже
+func AboutCollege(c maxbot.Context) error {
+	fullName := "\nПолное наименование ОО:\nБюджетное учреждение профессионального образования Ханты–Мансийского автономного округа–Югры «Игримский политехнический колледж»\n"
+	abbriviatedName := "\nСокращенное наименование ОО:\nБУ «Игримский политехнический колледж»"
+	text := "Основные сведения:\n"
+	EnterpriseCardLink := "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
+
+	text += fullName + abbriviatedName // Соединяем весь текст о колледже в один
+
+	kb := model.NewKeyboard()
+	kb.AddRow().
+		AddCallBack("Контактные данные", "/Contacts").
+		AddCallBack("Место нахождения", "/Location").
+		AddLink("Карточка предприятия", EnterpriseCardLink)
+	kb.AddRow().
+		AddCallBack("Режим и график работы", "/WorkSchedule").
+		AddCallBack("Места осуществления образовательной деятельности", "/EducationalActivities")
+
+	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func EducationalActivities(c maxbot.Context) error {
+	text := "Образование"
 
 	kb := model.NewKeyboard()
 
 	kb.AddRow().
-		AddCallBack("Паспорт", "/Passport").
-		AddCallBack("СНИЛС", "/SNILS")
+		AddCallBack("Основная", "/MainEducate").
+		AddCallBack("Учебная практика", "/EducationalPractice").
+		AddCallBack("Производственная практика", "/ProductionPractice")
 
-	return c.Send(text, maxbot.WithKeyboard(kb))
-}
+	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
+		return err
+	}
 
-func SendPassport(c maxbot.Context, api *maxbot.Api) error {
-	chatID := c.Update().GetMessage().Recipient.ChatID
-	return sendLocalImage(c.Context(), api, chatID, "Отправляйте паспорт", "images/passport.jpg", "passport.jpg")
-}
-
-func SendSNILS(c maxbot.Context, api *maxbot.Api) error {
-	chatID := c.Update().GetMessage().Recipient.ChatID
-	return sendLocalImage(c.Context(), api, chatID, "Отправляйте СНИЛС", "images/snils.jpg", "snils.jpg")
+	return nil
 }

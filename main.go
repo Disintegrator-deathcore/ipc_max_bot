@@ -34,20 +34,9 @@ func main() {
 	}
 
 	// Регистрируем обработчики для команд и текстовых сообщений
-
-	bot.Handle("/start", handlers.StartHandler) // Отображение текста при старте бота
-	bot.Handle("/info", handlers.InfoHandler)   // Отображаем информацию о боте по команде /info
-	bot.HandleCallback("/Docs", handlers.SendDocs)
-	// bot.HandleCallback("/Passport", handlers.SendPassport)
-	bot.HandleCallback("/Passport", func(c maxbot.Context) error {
-		// Внутри этой функции мы можем использовать переменную bot из main.go!
-		return handlers.SendPassport(c, bot)
-	})
-	bot.HandleCallback("/SNILS", func(c maxbot.Context) error {
-		return handlers.SendSNILS(c, bot)
-	})
-	bot.Handle(maxbot.OnText, handlers.OnTextHandler) // Обрабатываем любые текстовые сообщения с помощью функции OnTextHandler
-
+	bot.Handle(maxbot.OnText, handlers.OnTextHandler)          // Обрабатываем любые текстовые сообщения с помощью функции OnTextHandler
+	bot.HandleCallback("/AboutCollege", handlers.AboutCollege) // Обрабатываем нажатие на кнопку "Информация о колледже"
+	bot.HandleCallback("/EducationalActivities", handlers.EducationalActivities)
 	// Запускаем бота
 	bot.Start()
 }
