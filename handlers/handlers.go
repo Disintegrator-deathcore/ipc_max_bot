@@ -5,148 +5,64 @@ import (
 	"github.com/max-messenger/maxbot"
 )
 
-// OnTextHandler обрабатывает любые текстовые сообщения, отправленные пользователем боту.
-// В зависимости от текста сообщения, бот отвечает определенной фразой или подтверждает получение текста.
 func OnTextHandler(c maxbot.Context) error {
 	defaultAnswer := "Я бот ИПК, вот что я умею"
 
 	kb := model.NewKeyboard()
 	kb.AddRow().
-		AddCallBack("Информация о колледже", "/AboutCollege").
+		AddCallBack("Информация о колледже", CmdAboutCollege).
 		AddCallBack("Информация о поступлении", "/AboutAdmission")
 
-	if err := c.Send(defaultAnswer, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	return c.Send(defaultAnswer, maxbot.WithKeyboard(kb))
 }
 
-// Функция обработки нажатия кнопки информации о колледже
 func AboutCollege(c maxbot.Context) error {
-	fullName := "\nПолное наименование ОО:" +
-		"\nБюджетное учреждение профессионального образования Ханты–Мансийского автономного округа–Югры «Игримский политехнический колледж»\n"
-	abbriviatedName := "\nСокращенное наименование ОО:\nБУ «Игримский политехнический колледж»"
-	text := "Основные сведения:\n"
-	EnterpriseCardLink := "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
-
-	text += fullName + abbriviatedName // Соединяем весь текст о колледже в один
+	enterpriseCardLink := "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
 
 	kb := model.NewKeyboard()
 	kb.AddRow().
 		AddCallBack("Контактные данные", "/Contacts").
 		AddCallBack("Место нахождения", "/Location").
-		AddLink("Карточка предприятия", EnterpriseCardLink)
+		AddLink("Карточка предприятия", enterpriseCardLink)
 	kb.AddRow().
 		AddCallBack("Режим и график работы", "/WorkSchedule").
-		AddCallBack("Места осуществления образовательной деятельности", "/EducationalActivities").
-		AddCallBack("Назад", "/MainInfo")
+		AddCallBack("Места осуществления образовательной деятельности", CmdEducationalActivities).
+		AddCallBack("Назад", CmdMainInfo)
 
-	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	return c.Send(aboutCollegeText, maxbot.WithKeyboard(kb))
 }
 
 func EducationalActivities(c maxbot.Context) error {
 	text := "Образование"
 
 	kb := model.NewKeyboard()
-
 	kb.AddRow().
-		AddCallBack("Основная", "/MainEducate").
-		AddCallBack("Учебная практика", "/EducationalPractice").
-		AddCallBack("Производственная практика", "/ProductionPractice").
-		AddCallBack("Назад", "/AboutCollege")
+		AddCallBack("Основная", CmdMainEducate).
+		AddCallBack("Учебная практика", CmdEducationalPractice).
+		AddCallBack("Производственная практика", CmdProductionPractice).
+		AddCallBack("Назад", CmdAboutCollege)
 
-	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	return c.Send(text, maxbot.WithKeyboard(kb))
 }
 
-// Возвращаем основные места проведения обучения
 func MainEducate(c maxbot.Context) error {
-	text := "Места прохождения основного обучения:\n\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 12\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 5а\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Транспортная, дом 8\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 12б\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, пер. Сосновый, дом 2б\n" +
-		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, уч. 12"
-
 	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdEducationalActivities)
 
-	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
-
-	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	return c.Send(mainEducateText, maxbot.WithKeyboard(kb))
 }
 
-// Возвращаем места прохождения учебной практика
 func EducationalPractice(c maxbot.Context) error {
-	text := "Места прохождения учебной практики:\n\n" +
-		"УПЦ филиал ООО «Газпром трансгаз Югорск»;\n" +
-		"ООО «Газпром трансгаз Югорск»;\n" +
-		"МБУ ДО «Игримский центр творчества»;\n" +
-		"БУ «Игримская районная больница»;\n" +
-		"БУ «Березовская районная больница»;\n" +
-		"БУ «Октябрьская районная больница»."
-
 	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdEducationalActivities)
 
-	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
-
-	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	return c.Send(educationalPracticeText, maxbot.WithKeyboard(kb))
 }
 
-// Возвращаем места прохождения производственной практика
 func ProductionPractice(c maxbot.Context) error {
-	text := "Места прохождения производственной практики:\n\n" +
-		"ООО «Газпром трансгаз Югорск»;\n" +
-		"Отделение по подготовке специалистов по направлению «Транспорт»;\n" +
-		"МБОУ Игримская СОШ им. Героя Советского Союза Собянина Г.Е.», структурное подразделение д/с «Березка»\n" +
-		"МБ ДОУ д/с «Рябинушка»;\n" +
-		"Игримское муниципальное унитарное предприятие «Тепловодоканал»;\n" +
-		"МБОУ Игримская СОШ №1 (структурное подразделение д/с «Звездоча»);\n" +
-		"РЭБ флота филиал ПАО «Газпром спецгазавтотранс»;\n" +
-		"Индивидуальные предприматели;\n" +
-		"МБУ ДО «Игримский центр творчества»;\n" +
-		"РКЦСОН (филиал п. Игрим);\n" +
-		"НРО КМНС «Рахтынья»;\n" +
-		"НО КМНС «Сосьва»;\n" +
-		"БУ «Игримский политехнический колледж», служба ССПС;\n" +
-		"МАОУ «Тегинская СОШ»;\n" +
-		"БУ «Игримский политехнический колледж», служба социально-психологического сопровождения;\n" +
-		"ОАО «Ханты-Мансийское АТП;\n" +
-		"МБУ ДО «Дом детского творчества» (с. Перегребное);\n" +
-		"МАУ ДО «Центр «Поиск» (с. Саранпауль);\n" +
-		"МАОУ «Березовская начальная школа»;\n" +
-		"МБУ ДО «Дом детского творчества»;\n" +
-		"БУ «Березовская районная больница»;\n" +
-		"МП Нефтеюганское РМУП «Торгово-транспортное предприятие», г. Нефтеюганск;\n" +
-		"Автотехцентр «Иртыш», ИП Матвеев Н.Б., г. Х-Мансийск;\n" +
-		"БУ «Октябрьская районная больница»;\n" +
-		"ООО «СК –Моторс- Нягань», г. Нягань;\n" +
-		"КУ по Центр Спас Югория Березовский ф-л пожарная часть Игрим;\n" +
-		"МП МО Октябрьский р-н «Обьтеплопром», п. Октябрьский."
-
 	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdEducationalActivities)
 
-	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
-
-	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
-		return err
-	}
-
-	return nil
+	// Используем чистую константу из файла routes.go
+	return c.Send(productionPracticeText, maxbot.WithKeyboard(kb))
 }
