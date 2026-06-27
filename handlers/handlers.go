@@ -1,36 +1,9 @@
 package handlers
 
 import (
-	"context"
-	"os"
-
-	maxbotapi "github.com/max-messenger/max-bot-api-client-go/v2"
 	"github.com/max-messenger/max-bot-api-client-go/v2/model"
 	"github.com/max-messenger/maxbot"
 )
-
-// Универсальная функция для загрузки и отправки любого локального изображения
-func sendLocalImage(ctx context.Context, api *maxbot.Api, chatID int64, text, filePath, fileName string) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
-	token, err := api.Client().Upload.Upload(ctx, model.UploadType(model.AttachImage), file, fileName, fileInfo.Size())
-	if err != nil {
-		return err
-	}
-
-	msg := maxbotapi.NewMessage().SetChat(chatID).SetText(text).AddAttachByToken(token, model.AttachImage)
-	_, err = api.Client().Messages.Send(ctx, msg)
-	return err
-}
 
 // OnTextHandler обрабатывает любые текстовые сообщения, отправленные пользователем боту.
 // В зависимости от текста сообщения, бот отвечает определенной фразой или подтверждает получение текста.
@@ -51,7 +24,8 @@ func OnTextHandler(c maxbot.Context) error {
 
 // Функция обработки нажатия кнопки информации о колледже
 func AboutCollege(c maxbot.Context) error {
-	fullName := "\nПолное наименование ОО:\nБюджетное учреждение профессионального образования Ханты–Мансийского автономного округа–Югры «Игримский политехнический колледж»\n"
+	fullName := "\nПолное наименование ОО:" +
+		"\nБюджетное учреждение профессионального образования Ханты–Мансийского автономного округа–Югры «Игримский политехнический колледж»\n"
 	abbriviatedName := "\nСокращенное наименование ОО:\nБУ «Игримский политехнический колледж»"
 	text := "Основные сведения:\n"
 	EnterpriseCardLink := "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
@@ -65,7 +39,8 @@ func AboutCollege(c maxbot.Context) error {
 		AddLink("Карточка предприятия", EnterpriseCardLink)
 	kb.AddRow().
 		AddCallBack("Режим и график работы", "/WorkSchedule").
-		AddCallBack("Места осуществления образовательной деятельности", "/EducationalActivities")
+		AddCallBack("Места осуществления образовательной деятельности", "/EducationalActivities").
+		AddCallBack("Назад", "/MainInfo")
 
 	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
 		return err
@@ -82,7 +57,92 @@ func EducationalActivities(c maxbot.Context) error {
 	kb.AddRow().
 		AddCallBack("Основная", "/MainEducate").
 		AddCallBack("Учебная практика", "/EducationalPractice").
-		AddCallBack("Производственная практика", "/ProductionPractice")
+		AddCallBack("Производственная практика", "/ProductionPractice").
+		AddCallBack("Назад", "/AboutCollege")
+
+	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Возвращаем основные места проведения обучения
+func MainEducate(c maxbot.Context) error {
+	text := "Места прохождения основного обучения:\n\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 12\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 5а\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Транспортная, дом 8\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 12б\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, пер. Сосновый, дом 2б\n" +
+		"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, уч. 12"
+
+	kb := model.NewKeyboard()
+
+	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
+
+	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Возвращаем места прохождения учебной практика
+func EducationalPractice(c maxbot.Context) error {
+	text := "Места прохождения учебной практики:\n\n" +
+		"УПЦ филиал ООО «Газпром трансгаз Югорск»;\n" +
+		"ООО «Газпром трансгаз Югорск»;\n" +
+		"МБУ ДО «Игримский центр творчества»;\n" +
+		"БУ «Игримская районная больница»;\n" +
+		"БУ «Березовская районная больница»;\n" +
+		"БУ «Октябрьская районная больница»."
+
+	kb := model.NewKeyboard()
+
+	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
+
+	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Возвращаем места прохождения производственной практика
+func ProductionPractice(c maxbot.Context) error {
+	text := "Места прохождения производственной практики:\n\n" +
+		"ООО «Газпром трансгаз Югорск»;\n" +
+		"Отделение по подготовке специалистов по направлению «Транспорт»;\n" +
+		"МБОУ Игримская СОШ им. Героя Советского Союза Собянина Г.Е.», структурное подразделение д/с «Березка»\n" +
+		"МБ ДОУ д/с «Рябинушка»;\n" +
+		"Игримское муниципальное унитарное предприятие «Тепловодоканал»;\n" +
+		"МБОУ Игримская СОШ №1 (структурное подразделение д/с «Звездоча»);\n" +
+		"РЭБ флота филиал ПАО «Газпром спецгазавтотранс»;\n" +
+		"Индивидуальные предприматели;\n" +
+		"МБУ ДО «Игримский центр творчества»;\n" +
+		"РКЦСОН (филиал п. Игрим);\n" +
+		"НРО КМНС «Рахтынья»;\n" +
+		"НО КМНС «Сосьва»;\n" +
+		"БУ «Игримский политехнический колледж», служба ССПС;\n" +
+		"МАОУ «Тегинская СОШ»;\n" +
+		"БУ «Игримский политехнический колледж», служба социально-психологического сопровождения;\n" +
+		"ОАО «Ханты-Мансийское АТП;\n" +
+		"МБУ ДО «Дом детского творчества» (с. Перегребное);\n" +
+		"МАУ ДО «Центр «Поиск» (с. Саранпауль);\n" +
+		"МАОУ «Березовская начальная школа»;\n" +
+		"МБУ ДО «Дом детского творчества»;\n" +
+		"БУ «Березовская районная больница»;\n" +
+		"МП Нефтеюганское РМУП «Торгово-транспортное предприятие», г. Нефтеюганск;\n" +
+		"Автотехцентр «Иртыш», ИП Матвеев Н.Б., г. Х-Мансийск;\n" +
+		"БУ «Октябрьская районная больница»;\n" +
+		"ООО «СК –Моторс- Нягань», г. Нягань;\n" +
+		"КУ по Центр Спас Югория Березовский ф-л пожарная часть Игрим;\n" +
+		"МП МО Октябрьский р-н «Обьтеплопром», п. Октябрьский."
+
+	kb := model.NewKeyboard()
+
+	kb.AddRow().AddCallBack("Назад", "/EducationalActivities")
 
 	if err := c.Send(text, maxbot.WithKeyboard(kb)); err != nil {
 		return err

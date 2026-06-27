@@ -34,9 +34,11 @@ func main() {
 	}
 
 	// Регистрируем обработчики для команд и текстовых сообщений
-	bot.Handle(maxbot.OnText, handlers.OnTextHandler)          // Обрабатываем любые текстовые сообщения с помощью функции OnTextHandler
-	bot.HandleCallback("/AboutCollege", handlers.AboutCollege) // Обрабатываем нажатие на кнопку "Информация о колледже"
-	bot.HandleCallback("/EducationalActivities", handlers.EducationalActivities)
+	bot.Handle(maxbot.OnText, handlers.OnTextHandler)                            // Обрабатываем любые текстовые сообщения с помощью функции OnTextHandler
+	bot.HandleCallback("/MainInfo", handlers.OnTextHandler)                      // Обрабатываем нажатие на кнопку "Назад" возвращая к дефолтному ответу
+	bot.HandleCallback("/AboutCollege", handlers.AboutCollege)                   // Обрабатываем нажатие на кнопку "Информация о колледже"
+	bot.HandleCallback("/EducationalActivities", handlers.EducationalActivities) // Обрабатываем нажатие на кнопку "Места осуществления образовательной деятельности"
+
 	// Запускаем бота
 	bot.Start()
 }
