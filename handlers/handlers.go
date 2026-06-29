@@ -11,21 +11,20 @@ func OnTextHandler(c maxbot.Context) error {
 	kb := model.NewKeyboard()
 	kb.AddRow().
 		AddCallBack("Информация о колледже", CmdAboutCollege).
-		AddCallBack("Информация о поступлении", "/AboutAdmission")
+		AddCallBack("Информация о поступлении", CmdAboutAdmission)
 
 	return c.Send(defaultAnswer, maxbot.WithKeyboard(kb))
 }
 
 func AboutCollege(c maxbot.Context) error {
-	enterpriseCardLink := "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
 
 	kb := model.NewKeyboard()
 	kb.AddRow().
-		AddCallBack("Контактные данные", "/Contacts").
-		AddCallBack("Место нахождения", "/Location").
+		AddCallBack("Контактные данные", CmdContacts).
+		AddCallBack("Место нахождения", CmdLocation).
 		AddLink("Карточка предприятия", enterpriseCardLink)
 	kb.AddRow().
-		AddCallBack("Режим и график работы", "/WorkSchedule").
+		AddCallBack("Режим и график работы", CmdWorkSchedule).
 		AddCallBack("Места осуществления образовательной деятельности", CmdEducationalActivities).
 		AddCallBack("Назад", CmdMainInfo)
 
@@ -63,6 +62,34 @@ func ProductionPractice(c maxbot.Context) error {
 	kb := model.NewKeyboard()
 	kb.AddRow().AddCallBack("Назад", CmdEducationalActivities)
 
-	// Используем чистую константу из файла routes.go
 	return c.Send(productionPracticeText, maxbot.WithKeyboard(kb))
+}
+
+// Функции в разработке
+func Contacts(c maxbot.Context) error {
+	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdAboutCollege)
+
+	return c.Send("Функция в разработке", maxbot.WithKeyboard(kb))
+}
+
+func Location(c maxbot.Context) error {
+	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdAboutCollege)
+
+	return c.Send("Функция в разработке", maxbot.WithKeyboard(kb))
+}
+
+func WorkSchedule(c maxbot.Context) error {
+	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdAboutCollege)
+
+	return c.Send("Функция в разработке", maxbot.WithKeyboard(kb))
+}
+
+func AboutAdmission(c maxbot.Context) error {
+	kb := model.NewKeyboard()
+	kb.AddRow().AddCallBack("Назад", CmdMainInfo)
+
+	return c.Send("Функция в разработке", maxbot.WithKeyboard(kb))
 }

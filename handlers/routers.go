@@ -4,7 +4,7 @@ import (
 	"github.com/max-messenger/maxbot"
 )
 
-// Выносим Callback-пути в константы, чтобы не ошибиться в опечатках
+// Выносим Callback-пути в константы
 const (
 	CmdMainInfo              = "/MainInfo"
 	CmdAboutCollege          = "/AboutCollege"
@@ -12,6 +12,15 @@ const (
 	CmdMainEducate           = "/MainEducate"
 	CmdEducationalPractice   = "/EducationalPractice"
 	CmdProductionPractice    = "/ProductionPractice"
+	CmdAboutAdmission        = "/AboutAdmission"
+	CmdContacts              = "/Contacts"
+	CmdLocation              = "/Location"
+	CmdWorkSchedule          = "/WorkSchedule"
+)
+
+// Выносим ссылки в константы
+const (
+	enterpriseCardLink = "https://ipcollege.ru/wp-content/uploads/2025/11/КАРТОЧКА-ПРЕДПРИЯТИЯ.pdf"
 )
 
 // RegisterAll регистрирует все хендлеры бота в одном месте
@@ -19,14 +28,19 @@ func RegisterAll(bot *maxbot.Api) {
 	bot.Handle(maxbot.OnText, OnTextHandler)
 
 	bot.HandleCallback(CmdMainInfo, OnTextHandler)
+	bot.Handle(CmdAboutAdmission, AboutAdmission)
 	bot.HandleCallback(CmdAboutCollege, AboutCollege)
 	bot.HandleCallback(CmdEducationalActivities, EducationalActivities)
 	bot.HandleCallback(CmdMainEducate, MainEducate)
 	bot.HandleCallback(CmdEducationalPractice, EducationalPractice)
 	bot.HandleCallback(CmdProductionPractice, ProductionPractice)
+	bot.HandleCallback(CmdContacts, Contacts)
+	bot.HandleCallback(CmdLocation, Location)
+	bot.HandleCallback(CmdWorkSchedule, WorkSchedule)
 }
 
 // Огромные тексты выносим вниз или в отдельный файл, чтобы они не мешали читать код
+// Места прохождения производственной практики
 const productionPracticeText = "Места прохождения производственной практики:\n\n" +
 	"ООО «Газпром трансгаз Югорск»;\n\n" +
 	"Отделение по подготовке специалистов по направлению «Транспорт»;\n\n" +
@@ -56,6 +70,7 @@ const productionPracticeText = "Места прохождения произво
 	"КУ по Центр Спас Югория Березовский ф-л пожарная часть Игрим;\n\n" +
 	"МП МО Октябрьский р-н «Обьтеплопром», п. Октябрьский."
 
+// Места прохождения учебной практики
 const educationalPracticeText = "Места прохождения учебной практики:\n\n" +
 	"УПЦ филиал ООО «Газпром трансгаз Югорск»;\n\n" +
 	"ООО «Газпром трансгаз Югорск»;\n\n" +
@@ -64,6 +79,7 @@ const educationalPracticeText = "Места прохождения учебно�
 	"БУ «Березовская районная больница»;\n\n" +
 	"БУ «Октябрьская районная больница»."
 
+// Места прохождения основного обучения
 const mainEducateText = "Места прохождения основного обучения:\n\n" +
 	"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 12\n\n" +
 	"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, дом 5а\n\n" +
@@ -72,6 +88,7 @@ const mainEducateText = "Места прохождения основного о
 	"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, пер. Сосновый, дом 2б\n\n" +
 	"628146, Российская Федерация, Тюменская область, Ханты-Мансийский автономный округ – Югра, пгт. Игрим, ул. Северная, уч. 12"
 
+// Основные сведения о колледже
 const aboutCollegeText = "Основные сведения:\n\n" + "Полное наименование ОО:\n" +
 	"Бюджетное учреждение профессионального образования Ханты–Мансийского автономного округа–Югры «Игримский политехнический колледж»\n\n" +
 	"Сокращенное наименование ОО:\n" +
